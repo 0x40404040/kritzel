@@ -1,7 +1,7 @@
 CC 			= gcc
 CFLAGS 		= -Wall -Wextra -std=c11 -Wno-unused-parameter
-INCLUDES 	:= 
-LDLIBS 		:=
+INCLUDES 	:= `pkg-config --cflags gtk+-3.0`
+LDLIBS 		:= `pkg-config --libs gtk+-3.0`
 
 
 BUILDDIR 	= build
@@ -20,13 +20,7 @@ run: build
 	./$(BINARY)
 
 build: $(OBJECTS) 
-	$(CC) $^ -o $(BINARY)
+	$(CC) $^ -o $(BINARY) $(LDLIBS)
 
 $(BUILDDIR)/%.o : $(SOURCEDIR)/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-test: 
-	@echo $(SOURCES)
-	@echo $(OBJECTS)
-	@echo $(SOURCES:$(SOURCEDIR)/%.c=$(BUILDDIR)/%.o)
-
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 
