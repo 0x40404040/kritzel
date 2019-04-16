@@ -1,7 +1,7 @@
 CC 			= gcc
 CFLAGS 		= -Wall -Wextra -std=c11 -Wno-unused-parameter
-INCLUDES 	:= `pkg-config --cflags gtk+-3.0`
-LDLIBS 		:= `pkg-config --libs gtk+-3.0`
+INCLUDES 	:= `pkg-config --cflags gtk+-3.0 goocanvas-2.0`
+LDLIBS 		:= `pkg-config --libs gtk+-3.0 goocanvas-2.0`
 
 
 BUILDDIR 	= build

@@ -1,15 +1,21 @@
 #include <gtk/gtk.h>
+#include <goocanvas.h>
+
+#include "canvas.h"
 
 /*
   called when application is started without command line arguments
 */
-static void activate(GApplication *app, gpointer _user_data) {
-	GtkWidget* window = gtk_application_window_new(GTK_APPLICATION(app));
+static void activate(GtkApplication *app, gpointer _user_data) {
+	GtkWidget* window = gtk_application_window_new(app);
 
-	gtk_window_set_default_size(GTK_WINDOW(window), 1024, 768);
 	gtk_window_set_title(GTK_WINDOW(window), "kritzel - Drawing application");
+	gtk_window_set_default_size(GTK_WINDOW(window), 1024, 768);
 
-	gtk_widget_show(window);
+	canvas_init(window);
+
+	gtk_widget_show_all(window);
+
 }
 
 int main(int argc, char* argv[]) {
