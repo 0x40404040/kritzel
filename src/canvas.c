@@ -9,6 +9,8 @@ typedef struct CanvasState {
 	GooCanvasItem* root;
 } CanvasState;
 
+
+
 static CanvasState* canvas_state_new(GtkWidget* goo_canvas) {
 	CanvasState* c = malloc(sizeof(CanvasState));
 
@@ -22,8 +24,17 @@ static CanvasState* canvas_state_new(GtkWidget* goo_canvas) {
 	return c;
 }
 
-void canvas_cb_unref(GtkWidget* _widget, gpointer canvas) {
-	free(canvas);
+/*
+  This function is only used internal in canvas
+*/
+static void canvas_state_set_background_size(CanvasState* state, int width, int height) {
+	GooCanvasRect* background = GOO_CANVAS_RECT(state->background_item);
+	background->rect_data->width = width;
+	background->rect_data->height = height;
+}
+
+void canvas_cb_unref(GtkWidget* _widget, gpointer data_canvas_state) {
+	free(data_canvas_state);
 }
 
 void canvas_cb_realize(GtkWidget* canvas, gpointer data_canvas_state) {
@@ -34,12 +45,9 @@ void canvas_cb_realize(GtkWidget* canvas, gpointer data_canvas_state) {
 	 */
 	int width = gtk_widget_get_allocated_width(canvas);
 	int height = gtk_widget_get_allocated_height(canvas);
-	CanvasState* state = (CanvasState*) data_canvas_state;
-	GooCanvasRect* background = GOO_CANVAS_RECT(state->background_item);
-	background->rect_data->width = width;
-	background->rect_data->height = height;
-
+	canvas_state_set_background_size(CANVAS_STATE(data_canvas_state), width, height);
 }
+
 
 /*
   Initlize a goo_canvas widget with callbacks to CanvasState
