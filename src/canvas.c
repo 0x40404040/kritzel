@@ -1,28 +1,25 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
-#include <goocanvas.h>
 
 #include "canvas.h"
-
 
 typedef struct CanvasState {
 	GooCanvasItem* background_item;
 	GooCanvasItem* root;
 	GooCanvasItem* current_group;
 
-	double line_width;
-	guint draw_color;
+	double* line_width;
+    GdkRGBA* draw_color;
 
 	double prev_x;
 	double prev_y;
+    
 } CanvasState;
-
-
 
 /*
   creates a canvas_state with default values
  */
-static CanvasState* canvas_state_new(GtkWidget* goo_canvas) {
+static CanvasState* canvas_state_new(GtkWidget* goo_canvas, GdkRGBA* draw_color, double* line_width) {
 	CanvasState* c = malloc(sizeof(CanvasState));
 
 	c->root = goo_canvas_get_root_item(GOO_CANVAS(goo_canvas));
@@ -32,8 +29,8 @@ static CanvasState* canvas_state_new(GtkWidget* goo_canvas) {
 										  "fill-color", "white",
 										  NULL);
 
-	c->line_width  = 3.0;
-	c->draw_color = (255 << 24) | (0 << 16) | (0 << 8) | 255; // R G B A
+	c->line_width  = line_width; 
+	c->draw_color = draw_color;
 
 	c->current_group = NULL;
 	c->prev_x = -1;
@@ -55,8 +52,8 @@ static void canvas_state_prev_points_set(CanvasState* state, double x, double y)
 
 static void canvas_state_current_drawing_new(CanvasState* state, double x, double y) {
 	state->current_group = goo_canvas_group_new(state->root,
-												"line_width", state->line_width,
-												"stroke-color-rgba", state->draw_color,
+												"line_width", *state->line_width,
+												"stroke-color-gdk-rgba", state->draw_color,
 												NULL);
 	canvas_state_prev_points_set(state, x, y);
 }
@@ -75,12 +72,11 @@ static void canvas_state_current_drawing_next_linepart(CanvasState* state, doubl
 	}
 }
 
-
-void canvas_cb_unref(GtkWidget* _widget, gpointer data_canvas_state) {
+static void canvas_cb_unref(GtkWidget* _widget, gpointer data_canvas_state) {
 	free(data_canvas_state);
 }
 
-void canvas_cb_realize(GtkWidget* canvas, gpointer data_canvas_state) {
+static void canvas_cb_realize(GtkWidget* canvas, gpointer data_canvas_state) {
 	/*
 	  Set background to widget width/height
 	  widget width/height before realize is 1
@@ -137,13 +133,12 @@ static gboolean canvas_cb_motion_notify_event(GtkWidget* widget,
 	return TRUE;
 }
 
-
 /*
   Initlize a goo_canvas widget with callbacks to CanvasState
  */
-void canvas_init(GtkWidget* container) {
+void canvas_init(GtkWidget* container, GdkRGBA* draw_color, double* line_width) {
 	GtkWidget* canvas = goo_canvas_new();
-	CanvasState* canvas_state = canvas_state_new(canvas);
+	CanvasState* canvas_state = canvas_state_new(canvas, draw_color, line_width);
 
 	gtk_container_add(GTK_CONTAINER(container), canvas);
 
@@ -163,5 +158,4 @@ void canvas_init(GtkWidget* container) {
 		exit(2);
 	}
 	g_signal_connect(window, "destroy", G_CALLBACK(canvas_cb_unref), canvas_state);
-
 }
