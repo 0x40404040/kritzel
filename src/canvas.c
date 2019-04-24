@@ -4,7 +4,6 @@
 #include "canvas.h"
 
 typedef struct CanvasState {
-	GooCanvasItem* background_item;
 	GooCanvasItem* root;
 	GooCanvasItem* current_group;
 
@@ -23,13 +22,8 @@ static CanvasState* canvas_state_new(GtkWidget* goo_canvas, GdkRGBA* draw_color,
 	CanvasState* c = malloc(sizeof(CanvasState));
 
 	c->root = goo_canvas_get_root_item(GOO_CANVAS(goo_canvas));
-	c->background_item = goo_canvas_rect_new(c->root, 0, 0, 0, 0,
-										  "line-width", 10.0,
-										  "stroke-color", "white",
-										  "fill-color", "white",
-										  NULL);
 
-	c->line_width  = line_width; 
+	c->line_width = line_width; 
 	c->draw_color = draw_color;
 
 	c->current_group = NULL;
@@ -37,12 +31,6 @@ static CanvasState* canvas_state_new(GtkWidget* goo_canvas, GdkRGBA* draw_color,
 	c->prev_y = -1;
 
 	return c;
-}
-
-static void canvas_state_set_background_size(CanvasState* state, int width, int height) {
-	GooCanvasRect* background = GOO_CANVAS_RECT(state->background_item);
-	background->rect_data->width = width;
-	background->rect_data->height = height;
 }
 
 static void canvas_state_prev_points_set(CanvasState* state, double x, double y) {
@@ -75,17 +63,6 @@ static void canvas_state_current_drawing_next_linepart(CanvasState* state, doubl
 static void canvas_cb_unref(GtkWidget* _widget, gpointer data_canvas_state) {
 	free(data_canvas_state);
 }
-
-static void canvas_cb_realize(GtkWidget* canvas, gpointer data_canvas_state) {
-	/*
-	  Set background to widget width/height
-	  widget width/height before realize is 1
-	 */
-	int width = gtk_widget_get_allocated_width(canvas);
-	int height = gtk_widget_get_allocated_height(canvas);
-	canvas_state_set_background_size(CANVAS_STATE(data_canvas_state), width, height);
-}
-
 
 static gboolean canvas_cb_button_press_event(GtkWidget* widget,
 										GdkEventButton* event,
@@ -136,9 +113,11 @@ static gboolean canvas_cb_motion_notify_event(GtkWidget* widget,
 /*
   Initlize a goo_canvas widget with callbacks to CanvasState
  */
-void canvas_init(GtkWidget* container, GdkRGBA* draw_color, double* line_width) {
+void canvas_init(GtkWidget* container, GdkRGBA* draw_color, GdkRGBA* bg_color, double* line_width) {
 	GtkWidget* canvas = goo_canvas_new();
 	CanvasState* canvas_state = canvas_state_new(canvas, draw_color, line_width);
+	g_object_set(G_OBJECT(canvas), "background-color-gdk-rgba", bg_color, NULL);
+	
 
 	gtk_container_add(GTK_CONTAINER(container), canvas);
 
@@ -147,14 +126,13 @@ void canvas_init(GtkWidget* container, GdkRGBA* draw_color, double* line_width) 
 						  | GDK_POINTER_MOTION_MASK
 						  | GDK_STRUCTURE_MASK);
 
-	g_signal_connect(canvas, "realize", G_CALLBACK(canvas_cb_realize), canvas_state);
 	g_signal_connect(canvas, "button-press-event", G_CALLBACK(canvas_cb_button_press_event), canvas_state);
 	g_signal_connect(canvas, "button-release-event", G_CALLBACK(canvas_cb_button_release_event), canvas_state);
 	g_signal_connect(canvas, "motion-notify-event", G_CALLBACK(canvas_cb_motion_notify_event), canvas_state);
 
 	GtkWidget* window = gtk_widget_get_toplevel(canvas);
 	if (!GTK_IS_WINDOW(window)) {
-		g_printerr("ERROR: toplevel of canvas is not window \%s:%d\n", __FILE__, __LINE__);
+		g_printerr("ERROR: toplevel of canvas is not window \n%s:%d\n", __FILE__, __LINE__);
 		exit(2);
 	}
 	g_signal_connect(window, "destroy", G_CALLBACK(canvas_cb_unref), canvas_state);

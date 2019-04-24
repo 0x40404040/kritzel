@@ -4,6 +4,6 @@
 
 
 #define CANVAS_STATE(vptr) (CanvasState*) vptr
-void canvas_init(GtkWidget* container, GdkRGBA* draw_color, double* line_width);
+void canvas_init(GtkWidget* container, GdkRGBA* draw_color, GdkRGBA* bg_color, double* line_width);
 
 #endif
