@@ -41,7 +41,7 @@ UiState* ui_state_new() {
 
 	ui_state->background_color = malloc(sizeof(GdkRGBA));
 	ui_state->background_color->red = 1.0;
-	ui_state->background_color->green = 0.0;
+	ui_state->background_color->green = 1.0;
 	ui_state->background_color->blue = 1.0;
 	ui_state->background_color->alpha = 1.0;
 
