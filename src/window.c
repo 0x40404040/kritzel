@@ -28,36 +28,36 @@ typedef struct {
 	GdkRGBA* background_color;
 	double selected_line_width;
 
-} UiState;
+} AppState;
 
-UiState* ui_state_new() {
-	UiState* ui_state = malloc(sizeof(UiState));
+AppState* app_state_new() {
+	AppState* app_state = malloc(sizeof(AppState));
 
-	ui_state->selected_color = malloc(sizeof(GdkRGBA));
-	ui_state->selected_color->red = 0.0;
-	ui_state->selected_color->green = 1.0;
-	ui_state->selected_color->blue = 1.0;
-	ui_state->selected_color->alpha = 1.0;
+	app_state->selected_color = malloc(sizeof(GdkRGBA));
+	app_state->selected_color->red = 0.0;
+	app_state->selected_color->green = 1.0;
+	app_state->selected_color->blue = 1.0;
+	app_state->selected_color->alpha = 1.0;
 
-	ui_state->background_color = malloc(sizeof(GdkRGBA));
-	ui_state->background_color->red = 1.0;
-	ui_state->background_color->green = 1.0;
-	ui_state->background_color->blue = 1.0;
-	ui_state->background_color->alpha = 1.0;
+	app_state->background_color = malloc(sizeof(GdkRGBA));
+	app_state->background_color->red = 1.0;
+	app_state->background_color->green = 1.0;
+	app_state->background_color->blue = 1.0;
+	app_state->background_color->alpha = 1.0;
 
-	ui_state->selected_line_width = 5.0;
+	app_state->selected_line_width = 5.0;
 	
-	return ui_state;
+	return app_state;
 }
 
 static void color_button_cb_color_set(GtkColorButton* widget, gpointer data) {
 	gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(widget), (GdkRGBA*) data);
 }
 
-static void window_cb_destroy(GtkWidget* widget, gpointer ui_state) {
-	gdk_rgba_free(((UiState*) ui_state)->selected_color);
-	gdk_rgba_free(((UiState*) ui_state)->background_color);
-	free(ui_state);
+static void window_cb_destroy(GtkWidget* widget, gpointer app_state) {
+	gdk_rgba_free(((AppState*) app_state)->selected_color);
+	gdk_rgba_free(((AppState*) app_state)->background_color);
+	free(app_state);
 }
 
 static void test(GtkColorChooser* chooser, GdkRGBA* color, gpointer data) {
@@ -96,13 +96,13 @@ void window_init(GtkWidget* window) {
 	GtkWidget* overlay = gtk_overlay_new();
 	gtk_container_add(GTK_CONTAINER(window), overlay);
 
-	UiState* ui_state = ui_state_new();
-	canvas_init(overlay, ui_state->selected_color, ui_state->background_color, &ui_state->selected_line_width);
+	AppState* app_state = app_state_new();
+	canvas_init(overlay, app_state->selected_color, app_state->background_color, &app_state->selected_line_width);
 
-	GtkWidget* color_button = gtk_color_button_new_with_rgba(ui_state->selected_color);
+	GtkWidget* color_button = gtk_color_button_new_with_rgba(app_state->selected_color);
 	gtk_widget_set_halign(color_button, GTK_ALIGN_START);
 	gtk_widget_set_valign(color_button, GTK_ALIGN_START);
-	g_signal_connect(color_button, "color-set", G_CALLBACK(color_button_cb_color_set), ui_state->selected_color);
+	g_signal_connect(color_button, "color-set", G_CALLBACK(color_button_cb_color_set), app_state->selected_color);
 	gtk_overlay_add_overlay(GTK_OVERLAY(overlay), color_button);
 
 
@@ -153,7 +153,7 @@ void window_init(GtkWidget* window) {
 
 	// gtk_overlay_add_overlay(GTK_OVERLAY(overlay), button);
 	// gtk_overlay_add_overlay(GTK_OVERLAY(overlay), ui_box);
-	g_signal_connect(window, "destroy", G_CALLBACK(window_cb_destroy), ui_state);
+	g_signal_connect(window, "destroy", G_CALLBACK(window_cb_destroy), app_state);
 
 
 	gtk_widget_show_all(window);
