@@ -60,6 +60,34 @@ static void window_cb_destroy(GtkWidget* widget, gpointer ui_state) {
 	free(ui_state);
 }
 
+static void test(GtkColorChooser* chooser, GdkRGBA* color, gpointer data) {
+	g_print("Test");
+}
+
+static void btn_settings_pressed(GtkWidget* widget, gpointer user_data) {
+	GtkWidget* grid_pref_color = gtk_grid_new();
+	GtkWidget* label_color_1 = gtk_label_new("Color 1");
+	GtkWidget* label_color_2 = gtk_label_new("Color 2");
+	GtkWidget* label_color_3 = gtk_label_new("Color 3");
+	GtkWidget* label_color_4 = gtk_label_new("Color 4");
+
+	gtk_grid_attach(GTK_GRID(grid_pref_color), label_color_1, 0, 0, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid_pref_color), label_color_2, 0, 1, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid_pref_color), label_color_3, 0, 2, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid_pref_color), label_color_4, 0, 3, 2, 1);
+
+
+	GtkWidget* win_preferences = gtk_dialog_new();
+	gtk_window_set_title(GTK_WINDOW(win_preferences), "Preferences");
+	gtk_window_set_default_size(GTK_WINDOW(win_preferences), 600, 400);
+	g_signal_connect_swapped(win_preferences, "response", G_CALLBACK(gtk_widget_destroy), win_preferences);
+
+	GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(win_preferences));
+	gtk_container_add(GTK_CONTAINER(content_area), grid_pref_color);
+	
+	gtk_widget_show_all(win_preferences);
+}
+
 void window_init(GtkWidget* window) {
 
 	gtk_window_set_title(GTK_WINDOW(window), "kritzel - Drawing application");
@@ -71,13 +99,22 @@ void window_init(GtkWidget* window) {
 	UiState* ui_state = ui_state_new();
 	canvas_init(overlay, ui_state->selected_color, ui_state->background_color, &ui_state->selected_line_width);
 
-
 	GtkWidget* color_button = gtk_color_button_new_with_rgba(ui_state->selected_color);
 	gtk_widget_set_halign(color_button, GTK_ALIGN_START);
 	gtk_widget_set_valign(color_button, GTK_ALIGN_START);
-
 	g_signal_connect(color_button, "color-set", G_CALLBACK(color_button_cb_color_set), ui_state->selected_color);
 	gtk_overlay_add_overlay(GTK_OVERLAY(overlay), color_button);
+
+
+
+
+		
+
+	GtkWidget* button_settings = gtk_button_new();
+	gtk_widget_set_halign(button_settings, GTK_ALIGN_START);
+	gtk_widget_set_valign(button_settings, GTK_ALIGN_END);
+	g_signal_connect(button_settings, "pressed", G_CALLBACK(btn_settings_pressed), NULL);
+	gtk_overlay_add_overlay(GTK_OVERLAY(overlay), button_settings);
 
 	// GtkWidget* button = gtk_button_new();
 	// gtk_widget_set_size_request(button, 50, 50);
