@@ -64,6 +64,7 @@ void window_init(GtkWidget* window) {
 
 	gtk_window_set_title(GTK_WINDOW(window), "kritzel - Drawing application");
 	gtk_window_set_default_size(GTK_WINDOW(window), 1024, 768);
+	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
 	GtkWidget* overlay = gtk_overlay_new();
 	gtk_container_add(GTK_CONTAINER(window), overlay);

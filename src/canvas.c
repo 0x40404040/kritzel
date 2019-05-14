@@ -83,6 +83,12 @@ static gboolean canvas_cb_button_press_event(GtkWidget* widget,
 	return TRUE;
 }
 
+static void canvas_cb_on_resize(GtkWidget* widget, GdkRectangle* allocation, gpointer canvas) {
+	int width, height = 0;
+	gtk_window_get_size(GTK_WINDOW(widget), &width, &height);
+	goo_canvas_set_bounds(GOO_CANVAS(canvas), 0, 0, width, height);
+}
+
 static gboolean canvas_cb_button_release_event(GtkWidget* widget,
 										GdkEventButton* event,
 										gpointer data)
@@ -136,4 +142,5 @@ void canvas_init(GtkWidget* container, GdkRGBA* draw_color, GdkRGBA* bg_color, d
 		exit(2);
 	}
 	g_signal_connect(window, "destroy", G_CALLBACK(canvas_cb_unref), canvas_state);
+	g_signal_connect(window, "size-allocate", G_CALLBACK(canvas_cb_on_resize), canvas);
 }
