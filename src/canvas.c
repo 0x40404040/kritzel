@@ -73,20 +73,9 @@ static gboolean canvas_cb_button_press_event(GtkWidget* widget,
 		canvas_state_current_drawing_new(state, event->x, event->y);
 	}
 
-	// TODO Create stack based history redo/undo
-	if (event->button == GDK_BUTTON_SECONDARY) {
-		int len = goo_canvas_item_get_n_children(state->root);
-		if (len > 1) goo_canvas_item_remove_child(state->root, len-1);
-	}
 
 	gtk_widget_queue_draw(widget);
 	return TRUE;
-}
-
-static void canvas_cb_on_resize(GtkWidget* widget, GdkRectangle* allocation, gpointer canvas) {
-	int width, height = 0;
-	gtk_window_get_size(GTK_WINDOW(widget), &width, &height);
-	goo_canvas_set_bounds(GOO_CANVAS(canvas), 0, 0, width, height);
 }
 
 static gboolean canvas_cb_button_release_event(GtkWidget* widget,
@@ -101,6 +90,34 @@ static gboolean canvas_cb_button_release_event(GtkWidget* widget,
 	gtk_widget_queue_draw(widget);
 	return TRUE;
 }
+
+static gboolean canvas_cb_key_press(GtkWidget* widget, GdkEventKey* event, gpointer data) {
+	CanvasState* state = CANVAS_STATE(data);
+
+	// TODO Create stack based history redo/undo
+	if (event->state == GDK_CONTROL_MASK && event->keyval == GDK_KEY_r) {
+		int len = goo_canvas_item_get_n_children(state->root);
+		if (len > 0) goo_canvas_item_remove_child(state->root, len-1);
+	}
+
+	if (event->state == GDK_CONTROL_MASK && event->keyval == GDK_KEY_w) {
+		int len = goo_canvas_item_get_n_children(state->root);
+		while(len > 0){
+			goo_canvas_item_remove_child(state->root, len-1);
+			len--;
+		}
+
+	}
+
+	return TRUE;
+}
+
+static void canvas_cb_on_resize(GtkWidget* widget, GdkRectangle* allocation, gpointer canvas) {
+	int width, height = 0;
+	gtk_window_get_size(GTK_WINDOW(widget), &width, &height);
+	goo_canvas_set_bounds(GOO_CANVAS(canvas), 0, 0, width, height);
+}
+
 
 static gboolean canvas_cb_motion_notify_event(GtkWidget* widget,
 									   GdkEventMotion* event,
@@ -143,4 +160,5 @@ void canvas_init(GtkWidget* container, GdkRGBA* draw_color, GdkRGBA* bg_color, d
 	}
 	g_signal_connect(window, "destroy", G_CALLBACK(canvas_cb_unref), canvas_state);
 	g_signal_connect(window, "size-allocate", G_CALLBACK(canvas_cb_on_resize), canvas);
+	g_signal_connect(window, "key-press-event", G_CALLBACK(canvas_cb_key_press), canvas_state);
 }
