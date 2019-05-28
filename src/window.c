@@ -45,11 +45,16 @@ AppState* app_state_new() {
 		gdk_rgba_parse(&app_state->selected_color, COLOR_1) &&
 		gdk_rgba_parse(&app_state->background_color, BACKGROUND_COLOR)
 		)) 
-		{
+	{
 			g_printerr("ERROR: could not parse color palette or background color!\n");
 			exit(1);
-			
-		}
+	}
+
+	
+	if(LINE_WIDTH < MIN_LINE_WIDTH || LINE_WIDTH > MAX_LINE_WIDTH || LINE_VARY < 0.1 || LINE_VARY > 5.0) {
+			g_printerr("ERROR: LINE_WIDTH/LINE_VARY MAX or MIN values are exceeded.\n");
+			exit(1);
+	}
 
 	app_state->selected_line_width = LINE_WIDTH;
 	
