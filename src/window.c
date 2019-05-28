@@ -1,7 +1,10 @@
+#include <stdlib.h>
 #include <gtk/gtk.h>
-#include "canvas.h"
 
 #include "window.h"
+#include "config.h"
+#include "canvas.h"
+
 
 // gboolean blub(GtkWidget* widget, GdkEventButton* event, gpointer data) {
 // 	gboolean is_visible = gtk_widget_is_visible(GTK_WIDGET(data));
@@ -27,16 +30,28 @@ typedef struct {
 	GdkRGBA selected_color;
 	GdkRGBA background_color;
 	double selected_line_width;
+	GdkRGBA color_palette[4]; 
 
 } AppState;
 
 AppState* app_state_new() {
 	AppState* app_state = malloc(sizeof(AppState));
 
-	gdk_rgba_parse(&app_state->selected_color, "#ff0000");
-	gdk_rgba_parse(&app_state->background_color, "#ffffff");
+	// check if all colors have the correct format
+	if (!(
+		gdk_rgba_parse(&app_state->selected_color, COLOR_4) &&
+		gdk_rgba_parse(&app_state->selected_color, COLOR_3) &&
+		gdk_rgba_parse(&app_state->selected_color, COLOR_2) &&
+		gdk_rgba_parse(&app_state->selected_color, COLOR_1) &&
+		gdk_rgba_parse(&app_state->background_color, BACKGROUND_COLOR)
+		)) 
+		{
+			g_printerr("ERROR: could not parse color palette or background color!\n");
+			exit(1);
+			
+		}
 
-	app_state->selected_line_width = 5.0;
+	app_state->selected_line_width = LINE_WIDTH;
 	
 	return app_state;
 }
@@ -46,8 +61,6 @@ static void color_button_cb_color_set(GtkColorButton* widget, gpointer data) {
 }
 
 static void window_cb_destroy(GtkWidget* widget, gpointer app_state) {
-	// gdk_rgba_free(((AppState*) app_state)->selected_color);
-	// gdk_rgba_free(((AppState*) app_state)->background_color);
 	free(app_state);
 }
 
@@ -75,6 +88,7 @@ void window_init(GtkWidget* window) {
 								   GTK_STYLE_PROVIDER(provider),
 								   GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 	gtk_style_context_add_class(gtk_widget_get_style_context(color_button), "circular");
+
 
 
 	g_signal_connect(color_button, "color-set", G_CALLBACK(color_button_cb_color_set), &app_state->selected_color);

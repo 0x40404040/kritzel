@@ -8,6 +8,7 @@ BUILDDIR 	= build
 SOURCEDIR 	= src
 BINNAME 	= kritzel
 BINARY 		= $(BUILDDIR)/$(BINNAME)
+CFG_HEADER	= src/config.h
 
 SOURCES		:= $(wildcard $(SOURCEDIR)/*.c) 
 OBJECTS 	:= $(SOURCES:$(SOURCEDIR)/%.c=$(BUILDDIR)/%.o)
@@ -22,5 +23,5 @@ run: build
 build: $(OBJECTS) 
 	$(CC) $^ -o $(BINARY) $(LDLIBS)
 
-$(BUILDDIR)/%.o : $(SOURCEDIR)/%.c
+$(BUILDDIR)/%.o : $(SOURCEDIR)/%.c $(CFG_HEADER)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 

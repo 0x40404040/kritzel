@@ -2,13 +2,14 @@
 #include <gtk/gtk.h>
 
 #include "canvas.h"
+#include "config.h"
 
 typedef struct CanvasState {
 	GooCanvasItem* root;
 	GooCanvasItem* current_group;
 
 	double* line_width;
-    GdkRGBA* draw_color;
+	GdkRGBA* draw_color;
 
 	double prev_x;
 	double prev_y;
@@ -95,19 +96,41 @@ static gboolean canvas_cb_key_press(GtkWidget* widget, GdkEventKey* event, gpoin
 	CanvasState* state = CANVAS_STATE(data);
 
 	// TODO Create stack based history redo/undo
+	
+	// undo last stroke 
 	if (event->state == GDK_CONTROL_MASK && event->keyval == GDK_KEY_r) {
 		int len = goo_canvas_item_get_n_children(state->root);
 		if (len > 0) goo_canvas_item_remove_child(state->root, len-1);
 	}
 
+	// clear canvas
 	if (event->state == GDK_CONTROL_MASK && event->keyval == GDK_KEY_w) {
 		int len = goo_canvas_item_get_n_children(state->root);
 		while(len > 0){
 			goo_canvas_item_remove_child(state->root, len-1);
 			len--;
 		}
-
 	}
+
+	// select colors
+	if (event->keyval == GDK_KEY_1) gdk_rgba_parse(state->draw_color, COLOR_1);
+	if (event->keyval == GDK_KEY_2) gdk_rgba_parse(state->draw_color, COLOR_2);
+	if (event->keyval == GDK_KEY_3) gdk_rgba_parse(state->draw_color, COLOR_3);
+	if (event->keyval == GDK_KEY_4) gdk_rgba_parse(state->draw_color, COLOR_4);
+	if (event->keyval == GDK_KEY_e) gdk_rgba_parse(state->draw_color, BACKGROUND_COLOR);
+
+
+	// change line width
+	if (event->keyval == GDK_KEY_a && (*state->line_width + LINE_VARY) < MAX_LINE_WIDTH) {
+		*state->line_width += LINE_VARY;
+	} 
+
+	if (event->keyval == GDK_KEY_s && (*state->line_width + LINE_VARY) > MIN_LINE_WIDTH) {
+		*state->line_width -= LINE_VARY;
+	} 
+
+	if (event->keyval == GDK_KEY_d) *state->line_width = LINE_WIDTH;
+	
 
 	return TRUE;
 }
