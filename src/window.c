@@ -24,8 +24,8 @@
 // }
 
 typedef struct {
-	GdkRGBA* selected_color;
-	GdkRGBA* background_color;
+	GdkRGBA selected_color;
+	GdkRGBA background_color;
 	double selected_line_width;
 
 } AppState;
@@ -33,17 +33,8 @@ typedef struct {
 AppState* app_state_new() {
 	AppState* app_state = malloc(sizeof(AppState));
 
-	app_state->selected_color = malloc(sizeof(GdkRGBA));
-	app_state->selected_color->red = 0.0;
-	app_state->selected_color->green = 1.0;
-	app_state->selected_color->blue = 1.0;
-	app_state->selected_color->alpha = 1.0;
-
-	app_state->background_color = malloc(sizeof(GdkRGBA));
-	app_state->background_color->red = 1.0;
-	app_state->background_color->green = 1.0;
-	app_state->background_color->blue = 1.0;
-	app_state->background_color->alpha = 1.0;
+	gdk_rgba_parse(&app_state->selected_color, "#ff0000");
+	gdk_rgba_parse(&app_state->background_color, "#ffffff");
 
 	app_state->selected_line_width = 5.0;
 	
@@ -55,8 +46,8 @@ static void color_button_cb_color_set(GtkColorButton* widget, gpointer data) {
 }
 
 static void window_cb_destroy(GtkWidget* widget, gpointer app_state) {
-	gdk_rgba_free(((AppState*) app_state)->selected_color);
-	gdk_rgba_free(((AppState*) app_state)->background_color);
+	// gdk_rgba_free(((AppState*) app_state)->selected_color);
+	// gdk_rgba_free(((AppState*) app_state)->background_color);
 	free(app_state);
 }
 
@@ -70,9 +61,9 @@ void window_init(GtkWidget* window) {
 	gtk_container_add(GTK_CONTAINER(window), overlay);
 
 	AppState* app_state = app_state_new();
-	canvas_init(overlay, app_state->selected_color, app_state->background_color, &app_state->selected_line_width);
+	canvas_init(overlay, &app_state->selected_color, &app_state->background_color, &app_state->selected_line_width);
 
-	GtkWidget* color_button = gtk_color_button_new_with_rgba(app_state->selected_color);
+	GtkWidget* color_button = gtk_color_button_new_with_rgba(&app_state->selected_color);
 	gtk_widget_set_size_request(color_button, 50, 50);
 	gtk_widget_set_halign(color_button, GTK_ALIGN_START);
 	gtk_widget_set_valign(color_button, GTK_ALIGN_START);
@@ -86,7 +77,7 @@ void window_init(GtkWidget* window) {
 	gtk_style_context_add_class(gtk_widget_get_style_context(color_button), "circular");
 
 
-	g_signal_connect(color_button, "color-set", G_CALLBACK(color_button_cb_color_set), app_state->selected_color);
+	g_signal_connect(color_button, "color-set", G_CALLBACK(color_button_cb_color_set), &app_state->selected_color);
 	gtk_overlay_add_overlay(GTK_OVERLAY(overlay), color_button);
 
 	g_signal_connect(window, "destroy", G_CALLBACK(window_cb_destroy), app_state);
