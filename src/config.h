@@ -1,6 +1,13 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H
 
+
+/**
+ * The default window WIDTH and HEIGHT in pixel.
+*/
+static const int WINDOW_WIDTH = 1440;
+static const int WINDOW_HEIGHT = 900;
+
 /*
  * Colors are parsed thorugh gdk_rgba_parse
  * accepted string formats are:

@@ -61,10 +61,6 @@ AppState* app_state_new() {
 	return app_state;
 }
 
-static void color_button_cb_color_set(GtkColorButton* widget, gpointer data) {
-	gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(widget), (GdkRGBA*) data);
-}
-
 static void window_cb_destroy(GtkWidget* widget, gpointer app_state) {
 	free(app_state);
 }
@@ -72,7 +68,7 @@ static void window_cb_destroy(GtkWidget* widget, gpointer app_state) {
 void window_init(GtkWidget* window) {
 
 	gtk_window_set_title(GTK_WINDOW(window), "kritzel - Drawing application");
-	gtk_window_set_default_size(GTK_WINDOW(window), 1024, 768);
+	gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
 	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
 	GtkWidget* overlay = gtk_overlay_new();
