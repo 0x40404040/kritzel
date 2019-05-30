@@ -81,24 +81,6 @@ void window_init(GtkWidget* window) {
 	AppState* app_state = app_state_new();
 	canvas_init(overlay, &app_state->selected_color, &app_state->background_color, &app_state->selected_line_width);
 
-	GtkWidget* color_button = gtk_color_button_new_with_rgba(&app_state->selected_color);
-	gtk_widget_set_size_request(color_button, 50, 50);
-	gtk_widget_set_halign(color_button, GTK_ALIGN_START);
-	gtk_widget_set_valign(color_button, GTK_ALIGN_START);
-
-	GtkCssProvider* provider = gtk_css_provider_new();
-	gtk_css_provider_load_from_data(provider,
-									"button {margin: 10px; border: transparent; background: none}\0", -1, NULL);
-	gtk_style_context_add_provider(gtk_widget_get_style_context(color_button),
-								   GTK_STYLE_PROVIDER(provider),
-								   GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-	gtk_style_context_add_class(gtk_widget_get_style_context(color_button), "circular");
-
-
-
-	g_signal_connect(color_button, "color-set", G_CALLBACK(color_button_cb_color_set), &app_state->selected_color);
-	gtk_overlay_add_overlay(GTK_OVERLAY(overlay), color_button);
-
 	g_signal_connect(window, "destroy", G_CALLBACK(window_cb_destroy), app_state);
 
 
