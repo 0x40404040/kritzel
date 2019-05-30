@@ -54,7 +54,7 @@ static void canvas_state_current_drawing_realize(CanvasState* state) {
 
 static void canvas_state_current_drawing_next_linepart(CanvasState* state, double x2, double y2) {
 	if(state->current_group) {
-		GooCanvasItem* _polypoint = goo_canvas_polyline_new_line(state->current_group,
+		goo_canvas_polyline_new_line(state->current_group,
 																state->prev_x, state->prev_y,
 																x2, y2,
 																NULL);
