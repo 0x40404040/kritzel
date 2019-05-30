@@ -14,15 +14,15 @@
  * and a is a floating point value in the range 0 to 1. 
 */
 
-#define BACKGROUND_COLOR "#000000"
+#define BACKGROUND_COLOR "#212121"
 
 /*
  *  COLOR_1 is default selected color
 */
-#define COLOR_1         "#ff0000"  
-#define COLOR_2         "#00ff00"
-#define COLOR_3         "#0000ff"
-#define COLOR_4         "#ffffff"
+#define COLOR_1         "#3B7A88"  
+#define COLOR_2         "#7DC27A"
+#define COLOR_3         "#FC736D"
+#define COLOR_4         "#BDCDBF"
 
 /*
  *  LINE_WIDTH should be a float number between 0.5 and 15
