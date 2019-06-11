@@ -5,27 +5,6 @@
 #include "config.h"
 #include "canvas.h"
 
-
-// gboolean blub(GtkWidget* widget, GdkEventButton* event, gpointer data) {
-// 	gboolean is_visible = gtk_widget_is_visible(GTK_WIDGET(data));
-// 	gtk_widget_set_visible(GTK_WIDGET(data), !is_visible);
-// 	return TRUE;
-// }
-
-// gboolean overlay_cb_get_child_position(GtkOverlay* overlay, GtkWidget* widget,
-// 									   GdkRectangle* allocation, gpointer data)
-// {
-// 	if(GTK_IS_BOX(widget)) {
-// 		allocation->x = 10;
-// 		allocation->y = 100;
-// 		allocation->height = 500;
-// 		allocation->width = 80;
-// 	} else {
-// 		return FALSE;
-// 	}
-// 	return TRUE;
-// }
-
 typedef struct {
 	GdkRGBA selected_color;
 	GdkRGBA background_color;
