@@ -16,8 +16,8 @@ Soon to be a simple drawing application.
 ## Keyboard shortcuts
 | Keys      |                   							|
 |:--------- | ---------------------------------------------	|
-| CTRL + r  | Undo last drawing 							|
-| CTRL + w  | Clear Canvas      							|
+| Shift + r | Undo last drawing 							|
+| Shift + c | Clear Canvas      							|
 | 1 		| Select color 1      							|
 | 2 		| Select color 2      							|
 | 3 		| Select color 3      							|

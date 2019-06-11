@@ -98,13 +98,13 @@ static gboolean canvas_cb_key_press(GtkWidget* widget, GdkEventKey* event, gpoin
 	// TODO Create stack based history redo/undo
 	
 	// undo last stroke 
-	if (event->state == GDK_CONTROL_MASK && event->keyval == GDK_KEY_r) {
+	if (event->keyval == GDK_KEY_R) {
 		int len = goo_canvas_item_get_n_children(state->root);
 		if (len > 0) goo_canvas_item_remove_child(state->root, len-1);
 	}
 
 	// clear canvas
-	if (event->state == GDK_CONTROL_MASK && event->keyval == GDK_KEY_w) {
+	if (event->keyval == GDK_KEY_C) {
 		int len = goo_canvas_item_get_n_children(state->root);
 		while(len > 0){
 			goo_canvas_item_remove_child(state->root, len-1);
