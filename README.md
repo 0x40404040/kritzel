@@ -1,11 +1,23 @@
-# kritzel [WIP]  
-Soon to be a simple drawing application.
+# kritzel   
+Bare minimum drawing application.
+
+
+Created in the need for a simple drawing application for scribbles.
+
+
+kritzel is tested on Linux only. 
+This may work on Windows and Mac.
 
 ---
 
 ### Features
 - Canvas size equals window size
 - No graphical user interface
+- Undo last drawing
+- Clear complete Canvas
+- Eraser
+- Max 4 Different Colors
+- Increase/Decrease line with
 
 ### Not implemented 
 - Save/Load images
@@ -37,9 +49,12 @@ The following values can be changed in ``config.h``.
 - Line width
 - Line vary when increment/decrement line width
 
+Need to Recompile to update config.
+
 ---
 
 ## Dependencies
 ```
 gtk3-devel goocanvas2-devel
 ```
+
